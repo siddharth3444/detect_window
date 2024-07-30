@@ -367,7 +367,7 @@ def optuna_hp_space(trial):
           "init_xavier_std": trial.suggest_float("init_xavier_std", 0.5, 1.0),
           "init_std": trial.suggest_float("init_std", 0.5, 1.0),
           "num_train_epochs": trial.suggest_int("num_train_epochs", 1, 100),
-          "batch_size": trial.suggest_categorical("batch_size", [1, 2, 4]),
+          "batch_size": trial.suggest_categorical("batch_size", [4, 6, 8]),
       }
 
 
@@ -498,7 +498,7 @@ def main():
 )
 
     # Training
-  
+    logger.info("Running Search")
     best_result = trainer.hyperparameter_search(
             direction="minimize",
             backend="optuna",

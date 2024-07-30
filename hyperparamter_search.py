@@ -32,6 +32,11 @@ from transformers.utils.versions import require_version
 
 
 logger = logging.getLogger(__name__)
+args=None
+label2id=None
+training_args=None
+id2label=None
+
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 #check_min_version("4.44.0.dev0")
@@ -324,6 +329,9 @@ def find_last_checkpoint(training_args: TrainingArguments) -> Optional[str]:
 def model_init(trial=None):
     global id2label
     global args
+    logger.info("===================================================================")
+    logger.info(id2label);
+    logger.info(args);
     params = {}
     if trial:
         params = trial.params
@@ -362,8 +370,12 @@ def optuna_hp_space(trial):
 
 
 
-def main():
 
+def main():
+    global args
+    global label2id
+    global training_args
+    global id2label
     # or by passing the --help flag to this script.
 
     parser = HfArgumentParser([Arguments, TrainingArguments])
@@ -471,8 +483,8 @@ def main():
     trainer = Trainer(
         model_init=model_init,
         args=training_args,
-        train_dataset=dataset["train"]
-        eval_dataset=dataset["validation"]
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["validation"],
         tokenizer=image_processor,
         data_collator=collate_fn,
         compute_metrics=compute_metrics,

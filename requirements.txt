@@ -3,3 +3,7 @@ timm
 datasets
 torchmetrics
 pycocotools
+accelerate 
+optuna 
+torch-summary 
+wandb

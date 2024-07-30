@@ -346,6 +346,8 @@ def model_init(trial=None):
     model = AutoModelForUniversalSegmentation.from_pretrained(
         args.model_name_or_path,
         config=config,
+        label2id=label2id,
+        id2label=id2label,
         ignore_mismatched_sizes=True,
         token=args.token,
     )

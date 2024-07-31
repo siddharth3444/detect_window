@@ -329,7 +329,7 @@ def find_last_checkpoint(training_args: TrainingArguments) -> Optional[str]:
 def model_init(trial=None):
     global id2label
     global args
-    logger.info("===================================================================")
+    logger.info("==========================Loading models===============================")
     logger.info(id2label);
     logger.info(args);
     params = {}
@@ -354,6 +354,7 @@ def model_init(trial=None):
     return model
 
 def optuna_hp_space(trial):
+      logger.info("Starting trial: %s", trial.number)
       return {
           "optim": trial.suggest_categorical('optim', ["adamw_torch"]),
           "learning_rate": trial.suggest_float("learning_rate", 5e-5, 1e-4, log=True),
@@ -366,7 +367,7 @@ def optuna_hp_space(trial):
           "mask_weight": trial.suggest_uniform("mask_weight", 0.0, 20.0),
           "init_xavier_std": trial.suggest_float("init_xavier_std", 0.5, 1.0),
           "init_std": trial.suggest_float("init_std", 0.5, 1.0),
-          "num_train_epochs": trial.suggest_int("num_train_epochs", 1, 100),
+          "num_train_epochs": trial.suggest_int("num_train_epochs", 1, 2),
           "batch_size": trial.suggest_categorical("batch_size", [4, 6, 8]),
       }
 
@@ -392,6 +393,8 @@ def main():
     training_args.eval_do_concat_batches = False
     training_args.batch_eval_metrics = True
     training_args.remove_unused_columns = False
+    training_args.load_best_model_at_end = True
+    training_args.metric_for_best_model="eval_mAP",
 
     # # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # # information sent is the one passed as arguments along with your Python/PyTorch versions.
@@ -414,7 +417,7 @@ def main():
 
     # dataset = load_dataset(args.dataset_name,split, trust_remote_code=args.trust_remote_code)
     dataset={}
-    d = load_dataset(args.dataset_name, split='train[:30]')
+    d = load_dataset(args.dataset_name, split='train[:10]')
     train_val_split = d.train_test_split(test_size=0.1)
     dataset["train"] = train_val_split["train"]
     dataset["validate"] = train_val_split["test"]
